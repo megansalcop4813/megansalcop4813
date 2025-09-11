@@ -1,19 +1,56 @@
 <!-- Tells the browser what type of page it is (HTML5) -->
 <!DOCTYPE html>
-<!-- Sets the language to English -->
-<html lang = "en">
+<!-- Sets the website language to English -->
+<html lang="en">
 <head>
     <!-- "UTF-8" makes sure that the letters and numbers appear correctly -->
-    <meta charset = "UTF-8" >
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <!-- Text that is displayed in the browser tab -->
-    <title> My First Ever Webpage :D </title>
+    <title>My Dynamic Webpage</title>
+    
 </head>
 <body>
-    <!-- Name in a big text -->
-    <h1> Megan Saleh </h1>
-    <!-- Course, Major, and Message in normal text -->
-    <p> COP 4813 </p>
-    <p> Computer Science </p>
-    <p> Hey Look, It Runs! </p>
+        <!-- Title displayed on website -->
+        <h1>Welcome to my dynamic webpage!</h1>
+            <!-- My personal information -->
+            <strong>Name:</strong> Megan Saleh <br>
+            <strong>Course:</strong> COP 4813 <br>
+            <strong>Major:</strong> Computer Science
+
+            <!-- These paragraphs will be filled in by JavaScript -->
+            <p id="time"></p>
+            <p id="period"></p>
+
+    <script>
+        // This function updates the time and background color
+        function updatePage() {
+            // Get the current date and time
+            var now = new Date();
+            var hours = now.getHours();
+            
+            // Display the current time on the webpage
+            document.getElementById('time').innerHTML = "Current Time: " + now.toLocaleTimeString();
+
+            // Check what time of day it is and set background color
+            if (hours >= 6 && hours < 12) { // Morning (6am to 12pm)
+                document.body.style.backgroundColor = "lightblue";
+                document.getElementById('period').innerHTML = "Period: Morning";
+            } else if (hours >= 12 && hours < 18) { // Afternoon (12pm to 6pm)
+                document.body.style.backgroundColor = "lavender";
+                document.getElementById('period').innerHTML = "Period: Afternoon";
+            } else if (hours >= 18 && hours < 21) { // Evening (6pm to 9pm)
+                document.body.style.backgroundColor = "purple";
+                document.getElementById('period').innerHTML = "Period: Evening";
+            } else { // Night (9pm to 6am)
+                document.body.style.backgroundColor = "darkblue";
+                document.getElementById('period').innerHTML = "Period: Night";
+            }
+        }
+        // Runs the function once when page loads
+        updatePage();
+        // Run the function every second to keep time updated
+        setInterval(updatePage, 1000);
+    </script>
 </body>
 </html>
