@@ -8,42 +8,67 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <!-- Text that is displayed in the browser tab -->
     <title>My Dynamic Webpage</title>
-    
+    <style>
+        /* Center the image in the middle of the screen */
+        #image-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 50vh; 
+        }
+        #timeImage {
+            max-width: 80%;
+            height: auto;
+        }
+    </style>
 </head>
 <body>
-        <!-- Title displayed on website -->
-        <h1>Welcome to my dynamic webpage!</h1>
-            <!-- My personal information -->
-            <strong>Name:</strong> Megan Saleh <br>
-            <strong>Course:</strong> COP 4813 <br>
-            <strong>Major:</strong> Computer Science
+    <!-- Title displayed on website -->
+    <h1>Welcome to my dynamic webpage!</h1>
 
-            <!-- These paragraphs will be filled in by JavaScript -->
-            <p id="time"></p>
-            <p id="period"></p>
+        <!-- My personal information -->
+        <strong>Name:</strong> Megan Saleh <br>
+        <strong>Course:</strong> COP 4813 <br>
+        <strong>Major:</strong> Computer Science <br>
+        <strong>Brief introduction:</strong> Hello! I have updated this website to display images based on the time of day! <br>
+        All images were created by me! :D
+
+        <!-- These paragraphs will be filled in by JavaScript -->
+        <p id="time"></p>
+        <p id="period"></p>
+
+
+        <!-- Image container -->
+        <div id="image-container">
+            <img id="timeImage" src="" alt="Time of Day Image"
+                style="width: 50%; height: auto; image-rendering: pixelated;"> <!-- Width enlarges the pixel art while keeping it proportionate with auto, image rendering allows-->
+        </div>                                                                 <!-- the pixel art to stay pixelated rather than being blurry-->
+        
+
 
     <script>
-        // This function updates the time and background color
+        // This function updates the time and image
         function updatePage() {
-            // Get the current date and time
+            const img = document.getElementById("timeImage");
             var now = new Date();
             var hours = now.getHours();
             
             // Display the current time on the webpage
             document.getElementById('time').innerHTML = "Current Time: " + now.toLocaleTimeString();
 
+
             // Check what time of day it is and set background color
             if (hours >= 6 && hours < 12) { // Morning (6am to 12pm)
-                document.body.style.backgroundColor = "lightblue";
+                img.src = "morning.png";
                 document.getElementById('period').innerHTML = "Period: Morning";
             } else if (hours >= 12 && hours < 18) { // Afternoon (12pm to 6pm)
-                document.body.style.backgroundColor = "lavender";
+                img.src = "afternoon.png";
                 document.getElementById('period').innerHTML = "Period: Afternoon";
             } else if (hours >= 18 && hours < 21) { // Evening (6pm to 9pm)
-                document.body.style.backgroundColor = "purple";
+                dimg.src = "evening.png";
                 document.getElementById('period').innerHTML = "Period: Evening";
             } else { // Night (9pm to 6am)
-                document.body.style.backgroundColor = "darkblue";
+                img.src = "night.png";
                 document.getElementById('period').innerHTML = "Period: Night";
             }
         }
