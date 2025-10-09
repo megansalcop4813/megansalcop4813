@@ -1,0 +1,193 @@
+
+<!-- Tells the browser what type of page it is (HTML5) -->
+<!DOCTYPE html>
+<!-- Sets the website language to English -->
+<html lang="en">
+<head>
+    <!-- "UTF-8" makes sure that the letters and numbers appear correctly -->
+    <meta charset="UTF-8">
+    <!-- Makes the page look good on phones and tablets -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Text that is displayed in the browser tab -->
+    <title>Astronomy - Educational Topics Hub</title>
+    
+     <!-- CSS styling starts here -->
+    <style>
+        /* Resets default spacing for all elements */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        /* Styles for the whole page background */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            /* Light purple background */
+            background-color: #9B7EBD;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        /* Main white box that holds all content */
+        .container {
+            max-width: 800px;
+            margin: 0 auto; /* Centers the container */
+            background: white;
+            border: 2px solid #ddd;
+            border-radius: 15px; /* Rounded corners */
+            overflow: hidden;
+        }
+
+        /* Top colored header section */
+        .header {
+            /* Blue background for science topics */
+            background-color: #4facfe;
+            color: white;
+            padding: 40px 30px;
+            text-align: center;
+        }
+
+        /* Main title styling */
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        /* Small text under the title */
+        .breadcrumb {
+            font-size: 0.9em;
+            opacity: 0.9;
+        }
+
+        /* Main content area with paragraphs */
+        .content {
+            padding: 40px 30px;
+        }
+
+        /* Section headings */
+        .content h2 {
+            color: #333;
+            margin-bottom: 20px;
+            font-size: 1.8em;
+        }
+
+        /* Regular paragraph text */
+        .content p {
+            color: #555;
+            line-height: 1.8; /* Space between lines */
+            margin-bottom: 20px;
+            font-size: 1.1em;
+        }
+
+        /* Container for the image */
+        .media-container {
+            margin: 30px 0;
+            text-align: center;
+        }
+
+        /* Image styling */
+        .media-container img {
+            max-width: 100%; /* Makes image responsive */
+            height: auto;
+            border-radius: 10px;
+        }
+
+        /* Back button styling */
+        .back-button {
+            display: inline-block;
+            margin-top: 30px;
+            padding: 15px 40px;
+            background-color: #9B7EBD;
+            color: white;
+            text-decoration: none; /* Removes underline */
+            border-radius: 50px; /* Makes button rounded */
+            font-weight: bold;
+            font-size: 1.1em;
+        }
+
+        /* Gray box with key points list */
+        .key-points {
+            background: #f8f9fa;
+            padding: 25px;
+            border-radius: 10px;
+            margin: 25px 0;
+        }
+
+        /* Key points heading */
+        .key-points h3 {
+            color: #333;
+            margin-bottom: 15px;
+        }
+
+        /* Bullet point list */
+        .key-points ul {
+            list-style-position: inside;
+            color: #555;
+        }
+
+        /* Individual bullet points */
+        .key-points li {
+            margin-bottom: 10px;
+            line-height: 1.6;
+        }
+
+        /* Makes the page look better on phones (smaller screens) */
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2em; /* Smaller title on mobile */
+            }
+
+            .content {
+                padding: 30px 20px; /* Less padding on mobile */
+            }
+
+            .content h2 {
+                font-size: 1.5em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Main container that holds everything -->
+    <div class="container">
+        <!-- Top header with title -->
+        <div class="header">
+            <h1>Astronomy</h1>
+            <!-- Shows where you are on the site -->
+            <p class="breadcrumb">Science > Astronomy</p>
+        </div>
+
+        <!-- Main content section -->
+        <div class="content">
+            <h2>Understanding Astronomy</h2>
+            
+            <!-- First paragraph explaining what Astronomy is -->
+            <p>
+                Astronomy is a branch of science that studies celestial objects, space, and the universe as a whole.
+                Astronomy helps us understand the origins of stars, planets, and galaxies.
+            </p>
+
+            <!-- Gray box with important concepts -->
+            <div class="key-points">
+                <h3>Key Concepts in Astronomy:</h3>
+                <ul>
+                    <li><strong>Solar System:</strong> Includes the Sun, planets, moons, and smaller bodies</li>
+                    <li><strong>Stars and Galaxies:</strong> Massive systems that shape the visible universe</li>
+                    <li><strong>Cosmology:</strong> Studies the origin, structure, and evolution of the universe</li>
+                    <li><strong>Telescope Observation:</strong> Allows scientists to study distant celestial occurences such as planets</li>
+                </ul>
+            </div>
+
+            <!-- Image section -->
+            <div class="media-container">
+                <!-- My Astronomy image from the images folder -->
+                <img src="images/astronomy.png" alt="Astronomy">
+            </div>
+
+            <!-- Button that takes you back to the homepage -->
+            <a href="index.html" class="back-button">← Back to Homepage</a>
+        </div>
+    </div>
+</body>
+</html>

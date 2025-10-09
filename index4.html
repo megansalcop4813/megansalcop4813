@@ -1,0 +1,257 @@
+
+<!-- Tells the browser what type of page it is (HTML5) -->
+<!DOCTYPE html>
+<!-- Sets the website language to English -->
+<html lang="en">
+<head>
+    <!-- "UTF-8" makes sure that the letters and numbers appear correctly -->
+    <meta charset="UTF-8">
+    <!-- Makes the page look good on phones and tablets -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Text that is displayed in the browser tab -->
+    <title>Nested Menu Navigation Webpage</title>
+    
+    <!-- CSS styling starts here -->
+    <style>
+        /* Resets default spacing for all elements */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        /* Styles for the whole page background */
+        body {
+            font-family: Arial, sans-serif;
+            /* Light purple background */
+            background-color: #9B7EBD;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        /* Main container that holds all content */
+        .container {
+            max-width: 900px;
+            margin: 0 auto; /* Centers the container */
+        }
+
+        /* Top header section with title and subtitle */
+        header {
+            text-align: center;
+            color: white;
+            margin-bottom: 40px;
+            padding: 20px;
+        }
+
+        /* Main page title */
+        h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        /* Subtitle below the main title */
+        .subtitle {
+            font-size: 1.1em;
+        }
+
+        /* Container that holds all three subject cards */
+        .subjects-container {
+            display: flex;
+            flex-direction: column; /* Stacks cards vertically */
+            gap: 20px; /* Space between cards */
+        }
+
+        /* Individual subject card (Math, Science, History) */
+        .subject-card {
+            background: white;
+            border-radius: 10px; /* Rounded corners */
+            overflow: hidden;
+            border: 2px solid #ddd;
+        }
+
+        /* Clickable header part of each subject card */
+        .subject-header {
+            padding: 25px;
+            cursor: pointer; /* Shows hand cursor when hovering */
+            display: flex;
+            justify-content: space-between; /* Puts title on left, arrow on right */
+            align-items: center;
+        }
+
+        /* Red background for Mathematics (first card) */
+        .subject-card:nth-child(1) .subject-header {
+            background-color: #f80f0f;
+            color: white;
+        }
+
+        /* Blue background for Science (second card) */
+        .subject-card:nth-child(2) .subject-header {
+            background-color: #4facfe;
+            color: white;
+        }
+
+        /* Green background for History (third card) */
+        .subject-card:nth-child(3) .subject-header {
+            background-color: #43e97b;
+            color: white;
+        }
+
+        /* Subject name text (Mathematics, Science, History) */
+        .subject-title {
+            font-size: 1.8em;
+            font-weight: bold;
+        }
+
+        /* Down arrow that shows topics can be expanded */
+        .arrow {
+            font-size: 1.5em;
+        }
+
+        /* Rotates arrow when topics are open */
+        .arrow.open {
+            transform: rotate(180deg);
+        }
+
+        /* Container that holds the four topic links (hidden by default) */
+        .topics-container {
+            max-height: 0; /* Starts collapsed */
+            overflow: hidden;
+            background: #f8f9fa; /* Light gray background */
+        }
+
+        /* Shows the topics when clicked (expands container) */
+        .topics-container.show {
+            max-height: 500px;
+        }
+
+        /* Grid layout for the four topic buttons */
+        .topics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); /* Responsive columns */
+            gap: 15px; /* Space between topic buttons */
+            padding: 25px;
+        }
+
+        /* Individual topic button/link */
+        .topic-link {
+            display: block;
+            padding: 20px;
+            background: white;
+            border-radius: 5px;
+            text-decoration: none; /* Removes underline */
+            color: #333;
+            text-align: center;
+            border: 2px solid #ddd;
+            font-weight: bold;
+        }
+
+        /* Topic button hover effect */
+        .topic-link:hover {
+            border-color: #9B7EBD; /* Purple border */
+            background-color: #f0f0f0;
+        }
+
+        /* Makes the page look better on phones (smaller screens) */
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2em; /* Smaller title on mobile */
+            }
+
+            .subject-title {
+                font-size: 1.4em; /* Smaller subject names on mobile */
+            }
+
+            .topics-grid {
+                grid-template-columns: 1fr; /* Single column on mobile */
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Main container that holds everything -->
+    <div class="container">
+        <!-- Page header with title -->
+        <header>
+            <h1>Educational Topics Hub</h1>
+            <p class="subtitle">Learn more about academics!</p>
+        </header>
+
+        <!-- Container for all three subject cards -->
+        <div class="subjects-container">
+            <!-- Mathematics Subject Card -->
+            <div class="subject-card">
+                <!-- Clickable header - calls toggleTopics function when clicked -->
+                <div class="subject-header" onclick="toggleTopics(0)">
+                    <span class="subject-title">Mathematics</span>
+                    <!-- Down arrow (rotates when opened) -->
+                    <span class="arrow" id="arrow-0">▼</span>
+                </div>
+                <!-- Hidden topics section (shows when clicked) -->
+                <div class="topics-container" id="topics-0">
+                    <div class="topics-grid">
+                        <!-- Four math topic links -->
+                        <a href="algebra.html" class="topic-link">Algebra</a>
+                        <a href="geometry.html" class="topic-link">Geometry</a>
+                        <a href="calculus.html" class="topic-link">Calculus</a>
+                        <a href="trigonometry.html" class="topic-link">Trigonometry</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Science Subject Card -->
+            <div class="subject-card">
+                <!-- Clickable header -->
+                <div class="subject-header" onclick="toggleTopics(1)">
+                    <span class="subject-title">Science</span>
+                    <span class="arrow" id="arrow-1">▼</span>
+                </div>
+                <!-- Hidden topics section -->
+                <div class="topics-container" id="topics-1">
+                    <div class="topics-grid">
+                        <!-- Four science topic links -->
+                        <a href="physics.html" class="topic-link">Physics</a>
+                        <a href="chemistry.html" class="topic-link">Chemistry</a>
+                        <a href="biology.html" class="topic-link">Biology</a>
+                        <a href="astronomy.html" class="topic-link">Astronomy</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- History Subject Card -->
+            <div class="subject-card">
+                <!-- Clickable header -->
+                <div class="subject-header" onclick="toggleTopics(2)">
+                    <span class="subject-title">History</span>
+                    <span class="arrow" id="arrow-2">▼</span>
+                </div>
+                <!-- Hidden topics section -->
+                <div class="topics-container" id="topics-2">
+                    <div class="topics-grid">
+                        <!-- Four history topic links -->
+                        <a href="mesopotamia.html" class="topic-link">Mesopotamia</a>
+                        <a href="western.html" class="topic-link">Western Civilization</a>
+                        <a href="revolution.html" class="topic-link">Industrial Revolution</a>
+                        <a href="worldwars.html" class="topic-link">World Wars</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript code for making the dropdown work -->
+    <script>
+        // Function that opens/closes the topic sections
+        function toggleTopics(index) {
+            // Gets the topics container by its ID number (0, 1, or 2)
+            const topicsContainer = document.getElementById(`topics-${index}`);
+            // Gets the arrow by its ID number
+            const arrow = document.getElementById(`arrow-${index}`);
+            
+            // Toggles the "show" class to expand/collapse topics
+            topicsContainer.classList.toggle('show');
+            // Toggles the "open" class to rotate the arrow
+            arrow.classList.toggle('open');
+        }
+    </script>
+</body>
+</html>
