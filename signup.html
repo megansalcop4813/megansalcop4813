@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Meal Deal - Sign Up</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <div class="login-box">
+            <h1>Create Account</h1>
+            <p class="tagline">Join today to get meal plans customized for you!</p>
+
+            <!-- signup form with all required fields -->
+            <form id="signupForm">
+                <div class="form-group">
+                    <label for="name">Full Name:</label>
+                    <input type="text" id="name" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="email">Email:</label>
+                    <input type="email" id="email" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="password">Password (min 6 chars):</label>
+                    <input type="password" id="password" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="confirm">Confirm Password:</label>
+                    <input type="password" id="confirm" required>
+                </div>
+
+                <button type="submit" class="btn btn-primary">SIGN UP</button>
+            </form>
+
+            <!-- messages that show errors or success -->
+            <div class="error-message" id="errorMsg"></div>
+            <div class="success-message" id="successMsg"></div>
+
+            <div class="links">
+                <p>Already have an account? <a href="index.html">Login</a></p>
+            </div>
+        </div>
+    </div>
+
+    <script type="module">
+        // import firebase authentication and firestore
+        import { auth, db } from "./firebase.js";
+        import {
+            createUserWithEmailAndPassword
+        } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-auth.js";
+        import {
+            doc,
+            setDoc
+        } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-firestore.js";
+
+        const form = document.getElementById("signupForm");
+        const errorMsg = document.getElementById("errorMsg");
+        const successMsg = document.getElementById("successMsg");
+
+        // handle signup form submission
+        form.addEventListener("submit", async function (e) {
+            e.preventDefault();
+
+            // get all form values and remove extra spaces
+            const name = document.getElementById("name").value.trim();
+            const email = document.getElementById("email").value.trim();
+            const password = document.getElementById("password").value.trim();
+            const confirm = document.getElementById("confirm").value.trim();
+
+            // clear any previous messages
+            errorMsg.textContent = "";
+            successMsg.textContent = "";
+
+            // check password meets minimum length requirement
+            if (password.length < 6) {
+                errorMsg.textContent = "Password must be at least 6 characters.";
+                return;
+            }
+
+            // make sure passwords match
+            if (password !== confirm) {
+                errorMsg.textContent = "Passwords do not match.";
+                return;
+            }
+
+            try {
+                // create new user account in firebase auth
+                const result = await createUserWithEmailAndPassword(auth, email, password);
+                const user = result.user;
+
+                // save additional user info to firestore database
+                await setDoc(doc(db, "users", user.uid), {
+                    name: name,
+                    email: email,
+                    createdAt: new Date().toISOString()
+                });
+
+                // show success message
+                successMsg.textContent = "Account created! Redirecting to login...";
+
+                // wait a bit then send user to login page
+                setTimeout(() => {
+                    window.location.href = "index.html";
+                }, 1500);
+
+            } catch (error) {
+                // handle different types of signup errors
+                if (error.code === "auth/email-already-in-use") {
+                    errorMsg.textContent = "Email is already registered.";
+                } else if (error.code === "auth/invalid-email") {
+                    errorMsg.textContent = "Invalid email format.";
+                } else {
+                    errorMsg.textContent = error.message;
+                }
+            }
+        });
+    </script>
+</body>
+</html>

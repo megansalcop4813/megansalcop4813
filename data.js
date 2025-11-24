@@ -1,0 +1,48 @@
+const MEALS = [
+  // BREAKFAST
+  { id: 1, name: "Oatmeal with Berries", type: "breakfast", dietTypes: ["NoRestriction", "Vegetarian", "Vegan", "GlutenFree"], allergens: [] },
+  { id: 2, name: "Scrambled Eggs & Toast", type: "breakfast", dietTypes: ["NoRestriction", "Vegetarian"], allergens: ["Eggs", "Gluten"] },
+  { id: 3, name: "Greek Yogurt Parfait", type: "breakfast", dietTypes: ["NoRestriction", "Vegetarian", "GlutenFree", "Keto"], allergens: ["Dairy"] },
+  { id: 4, name: "Avocado Toast", type: "breakfast", dietTypes: ["NoRestriction", "Vegetarian", "Vegan"], allergens: ["Gluten"] },
+  { id: 5, name: "Smoothie Bowl", type: "breakfast", dietTypes: ["NoRestriction", "Vegetarian", "Vegan", "GlutenFree"], allergens: ["TreeNuts"] },
+  { id: 6, name: "Pancakes with Maple Syrup", type: "breakfast", dietTypes: ["NoRestriction", "Vegetarian"], allergens: ["Eggs", "Dairy", "Gluten"] },
+  { id: 7, name: "Chia Seed Pudding", type: "breakfast", dietTypes: ["NoRestriction", "Vegetarian", "Vegan", "GlutenFree"], allergens: ["Soy"] },
+  { id: 8, name: "Fruit Salad", type: "breakfast", dietTypes: ["NoRestriction", "Vegetarian", "Vegan", "GlutenFree", "Keto"], allergens: [] },
+  { id: 9, name: "Granola with Milk", type: "breakfast", dietTypes: ["NoRestriction", "Vegetarian"], allergens: ["Dairy", "Gluten", "TreeNuts"] },
+  { id: 10, name: "Banana Bread", type: "breakfast", dietTypes: ["NoRestriction", "Vegetarian"], allergens: ["Eggs", "Dairy", "Gluten"] },
+
+  // LUNCH
+  { id: 11, name: "Grilled Chicken Salad", type: "lunch", dietTypes: ["NoRestriction", "GlutenFree", "Keto"], allergens: [] },
+  { id: 12, name: "Turkey Sandwich", type: "lunch", dietTypes: ["NoRestriction"], allergens: ["Gluten"] },
+  { id: 13, name: "Vegan Buddha Bowl", type: "lunch", dietTypes: ["Vegan", "Vegetarian", "GlutenFree"], allergens: ["Soy"] },
+  { id: 14, name: "Caesar Salad with Grilled Fish", type: "lunch", dietTypes: ["NoRestriction", "GlutenFree", "Keto"], allergens: ["Fish", "Dairy"] },
+  { id: 15, name: "Veggie Wrap", type: "lunch", dietTypes: ["Vegetarian", "Vegan"], allergens: ["Gluten"] },
+  { id: 16, name: "Tuna Salad Sandwich", type: "lunch", dietTypes: ["NoRestriction"], allergens: ["Fish", "Gluten"] },
+  { id: 17, name: "Caprese Sandwich", type: "lunch", dietTypes: ["Vegetarian"], allergens: ["Dairy", "Gluten"] },
+  { id: 18, name: "Lentil Soup", type: "lunch", dietTypes: ["Vegan", "Vegetarian", "GlutenFree"], allergens: [] },
+  { id: 19, name: "Chicken Fajitas", type: "lunch", dietTypes: ["NoRestriction"], allergens: ["Dairy"] },
+  { id: 20, name: "Sushi Bowl", type: "lunch", dietTypes: ["NoRestriction", "GlutenFree"], allergens: ["Fish", "Shellfish", "Soy"] },
+  { id: 41, name: "Grilled Chicken Pesto Sandwich", type: "lunch", dietTypes: ["NoRestriction"], allergens: ["Gluten", "Shellfish", "Soy"] },
+
+  // DINNER
+  { id: 21, name: "Salmon with Broccoli", type: "dinner", dietTypes: ["NoRestriction", "GlutenFree", "Keto"], allergens: ["Fish"] },
+  { id: 22, name: "Pasta Primavera", type: "dinner", dietTypes: ["Vegetarian", "Vegan"], allergens: ["Gluten"] },
+  { id: 23, name: "Grilled Steak with Vegetables", type: "dinner", dietTypes: ["NoRestriction", "GlutenFree", "Keto"], allergens: [] },
+  { id: 24, name: "Vegetable Stir Fry", type: "dinner", dietTypes: ["Vegan", "Vegetarian", "GlutenFree"], allergens: ["Soy"] },
+  { id: 25, name: "Roasted Chicken Thighs", type: "dinner", dietTypes: ["NoRestriction", "GlutenFree", "Keto"], allergens: [] },
+  { id: 26, name: "Eggplant Parmesan", type: "dinner", dietTypes: ["Vegetarian"], allergens: ["Eggs", "Dairy", "Gluten"] },
+  { id: 27, name: "Shrimp Tacos", type: "dinner", dietTypes: ["NoRestriction", "GlutenFree"], allergens: ["Shellfish"] },
+  { id: 28, name: "Mushroom Risotto", type: "dinner", dietTypes: ["Vegetarian"], allergens: ["Dairy", "Gluten"] },
+  { id: 29, name: "Turkey Meatballs with Marinara", type: "dinner", dietTypes: ["NoRestriction"], allergens: ["Gluten", "Dairy"] },
+  { id: 30, name: "Tofu Curry", type: "dinner", dietTypes: ["Vegan", "Vegetarian", "GlutenFree"], allergens: ["Soy"] },
+  { id: 31, name: "Baked Cod with Lemon", type: "dinner", dietTypes: ["NoRestriction", "GlutenFree", "Keto"], allergens: ["Fish"] },
+  { id: 32, name: "Vegetable Fajitas", type: "dinner", dietTypes: ["Vegetarian", "Vegan"], allergens: ["Gluten"] },
+  { id: 33, name: "Beef Burgers", type: "dinner", dietTypes: ["NoRestriction", "Keto"], allergens: ["Gluten"] },
+  { id: 34, name: "Chickpea Curry", type: "dinner", dietTypes: ["Vegan", "Vegetarian", "GlutenFree"], allergens: [] },
+  { id: 35, name: "Pork Chops with Sweet Potato", type: "dinner", dietTypes: ["NoRestriction", "GlutenFree"], allergens: [] },
+  { id: 36, name: "Zucchini Noodle Alfredo", type: "dinner", dietTypes: ["Vegetarian", "GlutenFree"], allergens: ["Dairy", "Eggs"] },
+  { id: 37, name: "Grilled Tilapia", type: "dinner", dietTypes: ["NoRestriction", "GlutenFree", "Keto"], allergens: ["Fish"] },
+  { id: 38, name: "Black Bean Burgers", type: "dinner", dietTypes: ["Vegan", "Vegetarian"], allergens: ["Gluten"] },
+  { id: 39, name: "Chicken Parmesan", type: "dinner", dietTypes: ["NoRestriction"], allergens: ["Eggs", "Dairy", "Gluten"] },
+  { id: 40, name: "Cauliflower Fried Rice", type: "dinner", dietTypes: ["Vegan", "Vegetarian", "GlutenFree"], allergens: ["Soy"] }
+];

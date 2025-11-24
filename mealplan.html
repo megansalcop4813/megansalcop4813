@@ -1,0 +1,236 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Meal Deal - Your Plan</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- navigation bar -->
+    <div class="navbar">
+        <div class="navbar-content">
+            <span class="logo-small">The Meal Deal</span>
+            <div class="nav-links">
+                <a href="preferences.html">← Back to Preferences</a>
+                <a href="saved-plans.html">Saved Plans</a>
+                <a href="index.html" class="btn-logout">Logout</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="mealplan-box">
+            <h1>Your 7-Day Meal Plan</h1>
+            <!-- shows diet type and allergies -->
+            <p class="plan-info" id="planInfo"></p>
+
+            <!-- this div will be filled with meal plan cards -->
+            <div class="mealplan-grid" id="mealplanGrid">
+                <!-- generated meal plan will go here -->
+            </div>
+
+            <!-- action buttons for regenerate, save, print, and back -->
+            <div class="action-buttons">
+                <button class="btn btn-secondary" onclick="generateNewPlan()">REGENERATE</button>
+                <button class="btn btn-success" onclick="savePlan()">SAVE THIS PLAN</button>
+                <button class="btn btn-info" onclick="window.print()">PRINT</button>
+                <a href="preferences.html" class="btn btn-secondary">← BACK</a>
+            </div>
+
+            <!-- message areas for success and error -->
+            <div class="success-message" id="successMsg"></div>
+            <div class="error-message" id="errorMsg"></div>
+        </div>
+    </div>
+
+    <script src="data.js"></script>
+    <script type="module">
+        // import firebase auth and database
+        import { auth, db } from "./firebase.js";
+
+        import {
+            onAuthStateChanged,
+            signOut
+        } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-auth.js";
+
+        import {
+            collection,
+            addDoc
+        } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-firestore.js";
+
+        // variable to store logged in user
+        let firebaseUser = null;
+
+        // check if user is logged in
+        onAuthStateChanged(auth, (user) => {
+            if (!user) {
+                // not logged in so redirect to login page
+                window.location.href = "index.html";
+                return;
+            }
+            // save logged in user info
+            firebaseUser = user;
+        });
+
+        // logout button functionality
+        const logoutButtons = document.querySelectorAll(".btn-logout");
+        logoutButtons.forEach(btn => {
+            btn.addEventListener("click", async (e) => {
+                e.preventDefault();
+                await signOut(auth);
+                window.location.href = "index.html";
+            });
+        });
+
+
+        // variable to store current generated meal plan
+        let currentMealPlan = {};
+
+        // function to get random meal of specific type from meals array
+        function getRandomMeal(meals, mealType) {
+            // filter meals to only get ones that match the meal type
+            const filtered = meals.filter(m => m.type === mealType);
+            // if no meals found return placeholder
+            if (filtered.length === 0) return { name: 'No meals available', type: mealType };
+            // return random meal from filtered list
+            return filtered[Math.floor(Math.random() * filtered.length)];
+        }
+
+        // function to generate full week meal plan based on diet and allergies
+        function generateMealPlan(dietType, allergies) {
+            // filter meals that match diet type and don't contain user's allergens
+            const validMeals = MEALS.filter(meal => {
+                const dietMatches = meal.dietTypes.includes(dietType);
+                const noAllergens = !meal.allergens.some(allergen => allergies.includes(allergen));
+                return dietMatches && noAllergens;
+            });
+
+            // if no valid meals found show error
+            if (validMeals.length === 0) {
+                document.getElementById('errorMsg').textContent = 'No meals found for your preferences. Try adjusting allergies.';
+                return null;
+            }
+
+            // array of days for the week
+            const days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+            const plan = {};
+
+            // generate breakfast lunch and dinner for each day
+            days.forEach(day => {
+                plan[day] = {
+                    breakfast: getRandomMeal(validMeals, 'breakfast'),
+                    lunch: getRandomMeal(validMeals, 'lunch'),
+                    dinner: getRandomMeal(validMeals, 'dinner')
+                };
+            });
+
+            return plan;
+        }
+
+        // function to display meal plan on page
+        function displayMealPlan(plan) {
+            const grid = document.getElementById('mealplanGrid');
+            grid.innerHTML = '';
+
+            // loop through each day and create card for it
+            Object.keys(plan).forEach(day => {
+                const dayMeals = plan[day];
+                const dayCard = document.createElement('div');
+                dayCard.className = 'day-card';
+                // create html showing all three meals for this day
+                dayCard.innerHTML = `
+                    <h3>${day}</h3>
+                    <div class="meal">
+                        <strong>Breakfast:</strong>
+                        <p>${dayMeals.breakfast.name}</p>
+                    </div>
+                    <div class="meal">
+                        <strong>Lunch:</strong>
+                        <p>${dayMeals.lunch.name}</p>
+                    </div>
+                    <div class="meal">
+                        <strong>Dinner:</strong>
+                        <p>${dayMeals.dinner.name}</p>
+                    </div>
+                `;
+                grid.appendChild(dayCard);
+            });
+        }
+
+        // function to generate new meal plan when regenerate button clicked
+        function generateNewPlan() {
+            // get preferences from local storage
+            const prefs = JSON.parse(localStorage.getItem('currentPreferences'));
+            // generate new meal plan with those preferences
+            currentMealPlan = generateMealPlan(prefs.diet, prefs.allergies);
+            if (currentMealPlan) {
+                displayMealPlan(currentMealPlan);
+                // show success message briefly
+                document.getElementById('successMsg').textContent = 'New meal plan generated!';
+                setTimeout(() => {
+                    document.getElementById('successMsg').textContent = '';
+                }, 3000);
+            }
+        }
+
+        // function to save current meal plan to firestore
+        async function savePlan() {
+            // get user preferences
+            const prefs = JSON.parse(localStorage.getItem('currentPreferences'));
+
+            // check if user is logged in
+            if (!firebaseUser) {
+                document.getElementById('errorMsg').textContent = 'You must be logged in to save plans.';
+                return;
+            }
+
+            // check if meal plan has been generated
+            if (!currentMealPlan || Object.keys(currentMealPlan).length === 0) {
+                document.getElementById('errorMsg').textContent = 'Generate a meal plan first!';
+                return;
+            }
+
+            try {
+                // save meal plan to firestore with user id and preferences
+                await addDoc(collection(db, "mealPlans"), {
+                    userId: firebaseUser.uid,
+                    diet: prefs.diet,
+                    allergies: prefs.allergies,
+                    mealsData: currentMealPlan,
+                    createdAt: new Date().toISOString()
+                });
+
+                // show success message
+                document.getElementById('successMsg').textContent = '✓ Meal plan saved!';
+                setTimeout(() => {
+                    document.getElementById('successMsg').textContent = '';
+                }, 3000);
+
+            } catch (err) {
+                document.getElementById('errorMsg').textContent = 'Error saving plan: ' + err.message;
+            }
+        }
+
+        // make savePlan available to html onclick attribute
+        window.savePlan = savePlan;
+
+        // when page loads generate and show initial meal plan
+        window.addEventListener('load', function () {
+            // get saved preferences from local storage
+            const prefs = JSON.parse(localStorage.getItem('currentPreferences'));
+
+            // display diet and allergy info at top of page
+            document.getElementById('planInfo').textContent =
+                `${prefs.diet} • Allergies: ${prefs.allergies.length > 0 ? prefs.allergies.join(', ') : 'None'}`;
+
+            // generate and display meal plan
+            currentMealPlan = generateMealPlan(prefs.diet, prefs.allergies);
+            if (currentMealPlan) {
+                displayMealPlan(currentMealPlan);
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Meal Planner Pro - Admin</title>
+    <link rel="stylesheet" href="style.css">
+    <!-- import chart.js library for creating charts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+</head>
+<body>
+    <!-- admin login page shown first -->
+    <div id="adminLogin" class="login-page">
+        <div class="container">
+            <div class="login-box">
+                <h1>Admin Login</h1>
+                <p class="tagline">Secure admin access only</p>
+
+                <form id="adminLoginForm">
+                    <div class="form-group">
+                        <label for="adminEmail">Email:</label>
+                        <input type="email" id="adminEmail" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="adminPassword">Password:</label>
+                        <input type="password" id="adminPassword" required>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary">LOGIN AS ADMIN</button>
+                </form>
+
+                <div class="error-message" id="loginError"></div>
+                <div class="links">
+                    <p><a href="index.html">← Back to Login</a></p>
+                    <p style="font-size: 12px; color: #999; margin-top: 20px;">Demo credentials: admin@meal.com / admin123</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- admin dashboard shown after successful login -->
+    <div id="adminDashboard" class="admin-page" style="display: none;">
+        <div class="navbar">
+            <div class="navbar-content">
+                <span class="logo-small">Admin Dashboard</span>
+                <div class="nav-links">
+                    <a href="index.html" class="btn-logout">Logout</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="container admin-container">
+            <h1>Admin Dashboard</h1>
+
+            <!-- statistics cards showing key metrics -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-number" id="totalUsers">0</div>
+                    <div class="stat-label">Total Users</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="totalPlans">0</div>
+                    <div class="stat-label">Meal Plans Created</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="activeWeek">0</div>
+                    <div class="stat-label">Active This Week</div>
+                </div>
+            </div>
+
+            <!-- charts showing diet and allergy data -->
+            <div class="charts-grid">
+                <div class="chart-box">
+                    <h3>Diet Preferences</h3>
+                    <canvas id="dietChart"></canvas>
+                </div>
+                <div class="chart-box">
+                    <h3>Common Allergies</h3>
+                    <canvas id="allergiesChart"></canvas>
+                </div>
+            </div>
+
+            <!-- table showing all registered users -->
+            <div class="users-section">
+                <h2>All Registered Users</h2>
+                <table class="users-table">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Email</th>
+                            <th>Created</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="usersTableBody">
+                        <!-- users will be populated here -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script src="data.js"></script>
+    <script type="module">
+        // import firebase authentication and database
+        import { auth, db } from "./firebase.js";
+        import {
+            signInWithEmailAndPassword,
+            onAuthStateChanged,
+            signOut
+        } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-auth.js";
+
+        import {
+            collection,
+            getDocs,
+            deleteDoc,
+            doc
+        } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-firestore.js";
+
+        // hardcoded admin login credentials
+        const ADMIN_EMAIL = "admin@meal.com";
+        const ADMIN_PASSWORD = "admin123";
+
+        let firebaseUser = null;
+
+        // handle admin login form submission
+        document.getElementById("adminLoginForm").addEventListener("submit", async (e) => {
+            e.preventDefault();
+            const email = document.getElementById("adminEmail").value.trim();
+            const password = document.getElementById("adminPassword").value.trim();
+            const loginError = document.getElementById("loginError");
+
+            // verify admin credentials match hardcoded values
+            if (email !== ADMIN_EMAIL || password !== ADMIN_PASSWORD) {
+                loginError.textContent = "Invalid admin credentials";
+                return;
+            }
+
+            try {
+                // sign in with firebase using admin credentials
+                await signInWithEmailAndPassword(auth, email, password);
+
+                // hide login page and show dashboard
+                document.getElementById("adminLogin").style.display = "none";
+                document.getElementById("adminDashboard").style.display = "block";
+
+                // load all dashboard data
+                loadDashboard();
+
+            } catch (err) {
+                loginError.textContent = "Firebase login failed: " + err.message;
+            }
+        });
+
+        // function to load all dashboard data from firestore
+        async function loadDashboard() {
+            // get all users and meal plans from firestore
+            const usersSnapshot = await getDocs(collection(db, "users"));
+            const plansSnapshot = await getDocs(collection(db, "mealPlans"));
+
+            // count total users and plans
+            const totalUsers = usersSnapshot.size;
+            const totalPlans = plansSnapshot.size;
+
+            // update statistics on dashboard
+            document.getElementById("totalUsers").textContent = totalUsers;
+            document.getElementById("totalPlans").textContent = totalPlans;
+            document.getElementById("activeWeek").textContent = totalUsers;
+
+            // populate users table with all registered users
+            const tbody = document.getElementById("usersTableBody");
+            tbody.innerHTML = "";
+
+            usersSnapshot.forEach((docSnap) => {
+                const user = docSnap.data();
+                // create table row for each user
+                const row = document.createElement("tr");
+                row.innerHTML = `
+                    <td>${user.name}</td>
+                    <td>${user.email}</td>
+                    <td>${new Date(user.createdAt).toLocaleDateString()}</td>
+                    <td><button class="btn btn-danger btn-small" data-id="${docSnap.id}">Delete</button></td>
+                `;
+                tbody.appendChild(row);
+            });
+
+            // add click handlers to delete buttons
+            document.querySelectorAll(".btn-danger").forEach(btn => {
+                btn.addEventListener("click", async () => {
+                    const id = btn.getAttribute("data-id");
+                    if (confirm("Delete this user?")) {
+                        await deleteDoc(doc(db, "users", id));
+                        loadDashboard();
+                    }
+                });
+            });
+
+            // count how many plans use each diet type
+            const dietCounts = {};
+            plansSnapshot.forEach(docSnap => {
+                const plan = docSnap.data();
+                dietCounts[plan.diet] = (dietCounts[plan.diet] || 0) + 1;
+            });
+
+            // create pie chart showing diet preferences
+            new Chart(document.getElementById("dietChart"), {
+                type: "pie",
+                data: {
+                    labels: Object.keys(dietCounts),
+                    datasets: [{
+                        data: Object.values(dietCounts),
+                        backgroundColor: ["#FF6384", "#36A2EB", "#FFCE56", "#4BC0C0", "#9966FF"]
+                    }]
+                }
+            });
+
+            // count how many plans have each allergy
+            const allergyCounts = {};
+            plansSnapshot.forEach(docSnap => {
+                const plan = docSnap.data();
+                plan.allergies.forEach(a => {
+                    allergyCounts[a] = (allergyCounts[a] || 0) + 1;
+                });
+            });
+
+            // create bar chart showing common allergies
+            new Chart(document.getElementById("allergiesChart"), {
+                type: "bar",
+                data: {
+                    labels: Object.keys(allergyCounts),
+                    datasets: [{
+                        label: "Count",
+                        data: Object.values(allergyCounts),
+                        backgroundColor: "#36A2EB"
+                    }]
+                },
+                options: { indexAxis: "y", responsive: true }
+            });
+        }
+
+        // handle logout button clicks
+        const logoutButtons = document.querySelectorAll(".btn-logout");
+        logoutButtons.forEach(btn => {
+            btn.addEventListener("click", async (e) => {
+                e.preventDefault();
+                await signOut(auth);
+                window.location.href = "index.html";
+            });
+        });
+    </script>
+</body>
+</html>

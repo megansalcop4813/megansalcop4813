@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Meal Deal - Preferences</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- navigation bar at top of page -->
+    <div class="navbar">
+        <div class="navbar-content">
+            <span class="logo-small">The Meal Deal</span>
+            <div class="nav-links">
+                <a href="saved-plans.html">Saved Plans</a>
+                <a href="index.html" class="btn-logout">Logout</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="preferences-box">
+            <h1>Customize Your Meal Plan</h1>
+            
+            <form id="preferencesForm">
+                <!-- diet type selection section -->
+                <div class="section">
+                    <h2>Select Your Diet Type</h2>
+                    <div class="radio-group">
+                        <label class="radio-label">
+                            <input type="radio" name="diet" value="NoRestriction" checked>
+                            <span>No Restriction</span>
+                        </label>
+                        <label class="radio-label">
+                            <input type="radio" name="diet" value="Vegetarian">
+                            <span>Vegetarian</span>
+                        </label>
+                        <label class="radio-label">
+                            <input type="radio" name="diet" value="Vegan">
+                            <span>Vegan</span>
+                        </label>
+                        <label class="radio-label">
+                            <input type="radio" name="diet" value="Keto">
+                            <span>Keto</span>
+                        </label>
+                        <label class="radio-label">
+                            <input type="radio" name="diet" value="GlutenFree">
+                            <span>Gluten-Free</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- allergies selection section -->
+                <div class="section">
+                    <h2>Select Your Allergies</h2>
+                    <p class="subtitle">Check all that apply</p>
+                    <div class="checkbox-group">
+                        <label class="checkbox-label">
+                            <input type="checkbox" name="allergies" value="Peanuts">
+                            <span>Peanuts</span>
+                        </label>
+                        <label class="checkbox-label">
+                            <input type="checkbox" name="allergies" value="TreeNuts">
+                            <span>Tree Nuts</span>
+                        </label>
+                        <label class="checkbox-label">
+                            <input type="checkbox" name="allergies" value="Dairy">
+                            <span>Milk/Dairy</span>
+                        </label>
+                        <label class="checkbox-label">
+                            <input type="checkbox" name="allergies" value="Eggs">
+                            <span>Eggs</span>
+                        </label>
+                        <label class="checkbox-label">
+                            <input type="checkbox" name="allergies" value="Shellfish">
+                            <span>Shellfish</span>
+                        </label>
+                        <label class="checkbox-label">
+                            <input type="checkbox" name="allergies" value="Fish">
+                            <span>Fish</span>
+                        </label>
+                        <label class="checkbox-label">
+                            <input type="checkbox" name="allergies" value="Gluten">
+                            <span>Gluten/Wheat</span>
+                        </label>
+                        <label class="checkbox-label">
+                            <input type="checkbox" name="allergies" value="Soy">
+                            <span>Soy</span>
+                        </label>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn btn-primary btn-large">GENERATE MEAL PLAN</button>
+            </form>
+
+            <div class="error-message" id="errorMsg"></div>
+        </div>
+    </div>
+
+    <script type="module">
+        // import firebase authentication
+        import { auth } from "./firebase.js";
+        import { signOut, onAuthStateChanged } 
+            from "https://www.gstatic.com/firebasejs/12.6.0/firebase-auth.js";
+
+        // check if user is logged in, if not redirect to login page
+        onAuthStateChanged(auth, (user) => {
+            if (!user) {
+                window.location.href = "index.html";
+            }
+        });
+
+        // handle form submission when user clicks generate meal plan button
+        document.getElementById("preferencesForm").addEventListener("submit", function (e) {
+            e.preventDefault();
+
+            // get the selected diet type from radio buttons
+            const diet = document.querySelector('input[name="diet"]:checked').value;
+            
+            // get all checked allergies from checkboxes
+            const allergiesCheckboxes = document.querySelectorAll('input[name="allergies"]:checked');
+            const allergies = Array.from(allergiesCheckboxes).map(cb => cb.value);
+
+            // save user preferences to local storage so we can use them on next page
+            const preferences = { diet, allergies };
+            localStorage.setItem("currentPreferences", JSON.stringify(preferences));
+
+            // send user to meal plan page
+            window.location.href = "mealplan.html";
+        });
+
+        // logout functionality for all logout buttons on page
+        const logoutButtons = document.querySelectorAll(".btn-logout");
+        logoutButtons.forEach(btn => {
+            btn.addEventListener("click", async (e) => {
+                e.preventDefault();
+                await signOut(auth);
+                window.location.href = "index.html";
+            });
+        });
+    </script>
+</body>
+</html>
